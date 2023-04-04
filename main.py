@@ -23,7 +23,7 @@ white = 255, 255, 255
 
 screen.fill((149, 191, 187))
 
-# Affichage de la grille
+# Affichage des limites de la grille
 pygame.draw.rect(screen, black, [x - 50, y - 50, 1000, 1000], 200)
 
 # Créations de listes pour stocker les positions des croix et des ronds
@@ -44,7 +44,7 @@ diag1 = [(1580.0, 1020.0), (1280.0, 720.0), (980.0, 420.0)]
 diag2 = [(1580.0, 420.0), (1280.0, 720.0), (980.0, 1020.0)]
 
 
-# Réinitialise la fenêtre
+# Réinitialise la fenêtre et dessine la grille
 def clear():
     x = width / 2 - 450
     y = height / 2 - 450
@@ -102,7 +102,8 @@ while True:
         
         # Affiche une croix ou un rond sur la case cliquée en fonction du tour
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not check(circlePos) and not check(crossPos):
+            if not check(circlePos) and not check(crossPos): # Si personne n'a encore gagné
+                # Cherche à savoir de quelles cases la souris est la plus proche
                 mousePos = []
                 cx, cy = pygame.mouse.get_pos()
                 for i in range(0, len(positions)):
@@ -116,11 +117,12 @@ while True:
                 if cx - x < 0 or cx + x > width or cy - y < 0 or cy + y > height:
                     pass
                 else:
+                    # Si le tour est pair, dessiner un rond à la case la plus proche de la souris
                     if turn % 2 == 0:
                         for i in takenPositions:
                             if i == (cx, cy):
-                                taken = True
-                        if not taken:
+                                taken = True # Sauf si elle est déjà prise
+                        if not taken: # Si elle n'est pas prise
                             pygame.draw.ellipse(screen, black, [cx - 125, cy - 125, 250, 250], 20)
                             takenPositions.append((cx, cy))
                             circlePos.append((cx, cy))
@@ -136,6 +138,7 @@ while True:
                         else:
                             taken = False
                     else:
+                        # Si le tour est impair, de même mais pour les croix
                         for i in takenPositions:
                             if i == (cx, cy):
                                 taken = True
