@@ -23,7 +23,7 @@ white = 255, 255, 255
 
 screen.fill((149, 191, 187))
 
-# Affichage des limites de la grille
+# Affichage de la grille
 pygame.draw.rect(screen, black, [x - 50, y - 50, 1000, 1000], 200)
 
 # Créations de listes pour stocker les positions des croix et des ronds
@@ -44,7 +44,7 @@ diag1 = [(1580.0, 1020.0), (1280.0, 720.0), (980.0, 420.0)]
 diag2 = [(1580.0, 420.0), (1280.0, 720.0), (980.0, 1020.0)]
 
 
-# Réinitialise la fenêtre et dessine la grille
+# Réinitialise la fenêtre
 def clear():
     x = width / 2 - 450
     y = height / 2 - 450
@@ -64,19 +64,21 @@ def clear():
 
 
 # Algorithme de victoire (Bof...)
-def check(arg):
+def check(pos):
     try:
-        for i in range(0, len(arg)):
-            arg.sort(key=lambda tup: abs(tup[0]), reverse=True)
-            if arg[i][0] == arg[i + 1][0] == arg[i + 2][0]:
+        for i in range(0, len(pos)):
+            pos.sort(key=lambda tup: abs(tup[0]), reverse=True)
+            if pos[i][0] == pos[i + 1][0] == pos[i + 2][0]:
                 return True
-            elif (arg[i] == diag1[0] and arg[i + 1] == diag1[1] and arg[i + 2] == diag1[2]) or (arg[i] == diag1[0] and arg[i + 1] == diag1[1] and arg[i + 3] == diag1[2]):
+            elif (pos[i] == diag1[0] and pos[i + 1] == diag1[1] and pos[i + 2] == diag1[2]) \
+                    or (pos[i] == diag1[0] and pos[i + 1] == diag1[1] and pos[i + 3] == diag1[2]):
                 return True
-            elif (arg[i] == diag2[0] and arg[i + 1] == diag2[1] and arg[i + 2] == diag2[2]) or (arg[i] == diag2[0] and arg[i + 1] == diag2[1] and arg[i + 3] == diag2[2]):
+            elif (pos[i] == diag2[0] and pos[i + 1] == diag2[1] and pos[i + 2] == diag2[2]) \
+                    or (pos[i] == diag2[0] and pos[i + 1] == diag2[1] and pos[i + 3] == diag2[2]):
                 return True
             else:
-                arg.sort(key=lambda tup: abs(tup[1]))
-                if arg[i][1] == arg[i + 1][1] == arg[i + 2][1]:
+                pos.sort(key=lambda tup: abs(tup[1]))
+                if pos[i][1] == pos[i + 1][1] == pos[i + 2][1]:
                     return True
         return False
     except:
@@ -99,11 +101,10 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-        
+
         # Affiche une croix ou un rond sur la case cliquée en fonction du tour
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not check(circlePos) and not check(crossPos): # Si personne n'a encore gagné
-                # Cherche à savoir de quelles cases la souris est la plus proche
+            if not check(circlePos) and not check(crossPos):
                 mousePos = []
                 cx, cy = pygame.mouse.get_pos()
                 for i in range(0, len(positions)):
@@ -117,12 +118,11 @@ while True:
                 if cx - x < 0 or cx + x > width or cy - y < 0 or cy + y > height:
                     pass
                 else:
-                    # Si le tour est pair, dessiner un rond à la case la plus proche de la souris
                     if turn % 2 == 0:
                         for i in takenPositions:
                             if i == (cx, cy):
-                                taken = True # Sauf si elle est déjà prise
-                        if not taken: # Si elle n'est pas prise
+                                taken = True
+                        if not taken:
                             pygame.draw.ellipse(screen, black, [cx - 125, cy - 125, 250, 250], 20)
                             takenPositions.append((cx, cy))
                             circlePos.append((cx, cy))
@@ -138,7 +138,6 @@ while True:
                         else:
                             taken = False
                     else:
-                        # Si le tour est impair, de même mais pour les croix
                         for i in takenPositions:
                             if i == (cx, cy):
                                 taken = True
@@ -172,6 +171,6 @@ while True:
                 takenPositions = []
                 circlePos = []
                 crossPos = []
-    
+
     # Update la fenêtre
     pygame.display.update()
